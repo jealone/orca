@@ -1,4 +1,4 @@
-module git.intra.weibo.com/aladdin/gopher/orca.git
+module github.com/jealone/orca
 
 go 1.14
 
