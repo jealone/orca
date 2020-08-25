@@ -1,17 +1,18 @@
 package orca
 
-import (
-	"github.com/valyala/fasthttp"
-)
+type Routes func(*Router)
 
-type Router interface {
-	GET(path string, handler fasthttp.RequestHandler)
-	HEAD(path string, handler fasthttp.RequestHandler)
-	OPTIONS(path string, handler fasthttp.RequestHandler)
-	POST(path string, handler fasthttp.RequestHandler)
-	PATCH(path string, handler fasthttp.RequestHandler)
-	DELETE(path string, handler fasthttp.RequestHandler)
-	ANY(path string, handler fasthttp.RequestHandler)
-	Handle(method, path string, handler fasthttp.RequestHandler)
-	Group(path string) Router
+func panicHandler(ctx *RequestCtx, rcp interface{}) {
+	badRequestResponse(ctx, StatusInternalServerError)
+	ctx.Logger().Printf("panic:%s", rcp)
+}
+
+//405
+func notAllowed(ctx *RequestCtx) {
+	badRequestResponse(ctx, StatusMethodNotAllowed)
+}
+
+//404
+func notFound(ctx *RequestCtx) {
+	badRequestResponse(ctx, StatusNotFound)
 }

@@ -1,17 +1,14 @@
 package orca
 
-import (
-	"github.com/valyala/fasthttp"
-)
-
 type RouterAdapter interface {
-	Handler(*fasthttp.RequestCtx)
+	Handler(*RequestCtx)
 }
 
-func NewHttpServer(r RouterAdapter, Logger fasthttp.Logger) *fasthttp.Server {
+func NewHttpServer(r RouterAdapter, Logger Logger) *Server {
 	// @todo 通过配置实例化server
-	return &fasthttp.Server{
+	return &Server{
 		Handler: AfterFilter(r.Handler, AccessLogFilter),
 		Logger:  Logger,
+		ErrorHandler: errorHandler,
 	}
 }
