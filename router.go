@@ -1,7 +1,5 @@
 package orca
 
-type Routes func(*Router)
-
 func panicHandler(ctx *RequestCtx, rcp interface{}) {
 	badRequestResponse(ctx, StatusInternalServerError)
 	ctx.Logger().Printf("panic:%s", rcp)

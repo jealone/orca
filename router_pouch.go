@@ -10,11 +10,10 @@ type (
 	Group = router.Group
 )
 
-func NewRouter(routes Routes) *Router {
+func NewRouter() *Router {
 	root := router.New()
 	root.MethodNotAllowed = notAllowed
 	root.NotFound = notFound
 	root.PanicHandler = panicHandler
-	routes(root)
 	return root
 }
