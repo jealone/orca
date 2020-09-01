@@ -3,13 +3,11 @@ package orca
 import (
 	"bytes"
 	"testing"
-
-	"github.com/valyala/fasthttp"
 )
 
 func TestFilter(t *testing.T) {
 	type args struct {
-		ctx     *fasthttp.RequestCtx
+		ctx     *RequestCtx
 		Handler Filter
 	}
 
@@ -23,9 +21,9 @@ func TestFilter(t *testing.T) {
 		{
 			name: "before",
 			args: args{
-				Handler: BeforeFilter(func(ctx *fasthttp.RequestCtx) {
+				Handler: BeforeFilter(func(ctx *RequestCtx) {
 					buf.WriteString("handler\n")
-				}, func(ctx *fasthttp.RequestCtx) {
+				}, func(ctx *RequestCtx) {
 					buf.WriteString("pre handler\n")
 				}),
 			},
@@ -34,9 +32,9 @@ func TestFilter(t *testing.T) {
 		{
 			name: "after",
 			args: args{
-				Handler: AfterFilter(func(ctx *fasthttp.RequestCtx) {
+				Handler: AfterFilter(func(ctx *RequestCtx) {
 					buf.WriteString("handler\n")
-				}, func(ctx *fasthttp.RequestCtx) {
+				}, func(ctx *RequestCtx) {
 					buf.WriteString("after handler\n")
 				}),
 			},
