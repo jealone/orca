@@ -58,10 +58,12 @@ func (c *ServerConfig) GetRequest() *RequestConfig {
 }
 
 type SystemConfig struct {
-	GetOnly                      bool `yaml:"get_only"`
-	DisablePreParseMultipartForm bool `yaml:"disable_multipart_parse"`
-	ReduceMemoryUsage            bool `yaml:"reduce_memory_usage"`
-	LogAllErrors                 bool `yaml:"all_errors"`
+	AccessLog                    string `yaml:"access_log"`
+	DisableAccessLog             bool   `yaml:"disable_access_log"`
+	GetOnly                      bool   `yaml:"get_only"`
+	DisablePreParseMultipartForm bool   `yaml:"disable_multipart_parse"`
+	ReduceMemoryUsage            bool   `yaml:"reduce_memory_usage"`
+	LogAllErrors                 bool   `yaml:"all_errors"`
 }
 
 func (c *SystemConfig) GetMethodOnly() bool {
@@ -78,6 +80,14 @@ func (c *SystemConfig) GetReduceMemoryUsage() bool {
 
 func (c *SystemConfig) GetLogAllErrors() bool {
 	return c.LogAllErrors
+}
+
+func (c *SystemConfig) GetAccessLog() string {
+	return c.AccessLog
+}
+
+func (c *SystemConfig) GetDisableAccessLog() bool {
+	return c.GetDisableAccessLog()
 }
 
 type TcpConfig struct {

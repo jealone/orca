@@ -4,9 +4,21 @@ type RouterAdapter interface {
 	Handler(*RequestCtx)
 }
 
-func NewHttpServer(c ServerConfig, r RouterAdapter, Logger Logger) *Server {
+func NewHttpServer(c ServerConfig, Logger Logger, r RouterAdapter, options ...func(filter Filter) Filter) *Server {
+
+	h := r.Handler
+
+	for _, option := range options {
+		h = option(h)
+	}
+
+	if !c.GetDisableAccessLog() {
+		NewLogger(c.GetAccessLog())
+		h = AfterFilter(h, AccessLogFilter)
+	}
+
 	return &Server{
-		Handler:      AfterFilter(r.Handler, AccessLogFilter),
+		Handler:      h,
 		Logger:       Logger,
 		ErrorHandler: errorHandler,
 

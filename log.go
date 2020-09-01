@@ -10,23 +10,42 @@ import (
 )
 
 var (
-	accessLogger *AccessLogger
+	accessLogger         *AccessLogger
+	defaultAccessLogName = "logs/access.log"
 )
 
 func accessLog(ctx *RequestCtx) {
 	log(accessLogger, ctx)
 }
 
-func NewLogger(dir string) {
-	abs, err := filepath.Abs(dir)
+func NewLogger(path string) {
+
+	if "" == path {
+		path = defaultAccessLogName
+	}
+
+	abs, err := filepath.Abs(path)
 
 	if nil != err {
 		// 创建目录
-		fmt.Printf("log dir error:%s\n", err)
+		fmt.Printf("log path error:%s\n", err)
 		os.Exit(0)
 	}
 
-	accessLogFile := filepath.Join(abs, "orcaAccess.log")
+	info, err := os.Stat(abs)
+
+	if nil != err {
+		fmt.Printf("log path error:%s\n", err)
+		os.Exit(0)
+	}
+
+	var accessLogFile string
+
+	if info.IsDir() {
+		accessLogFile = filepath.Join(abs, defaultAccessLogName)
+	} else {
+		accessLogFile = abs
+	}
 
 	c, rotater := newFileNotify(accessLogFile, syscall.SIGHUP)
 
@@ -77,8 +96,4 @@ func newFileNotify(logfile string, signals ...os.Signal) (chan os.Signal, *Rotat
 		Compress:   false,
 	}
 	return c, rotater
-}
-
-func init() {
-	NewLogger("./logs")
 }

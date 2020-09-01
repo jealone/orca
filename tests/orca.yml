@@ -35,6 +35,8 @@ reduce_memory_usage: false
 # are suppressed in order to limit output log traffic.
 all_errors: false
 
+access_log: access.log
+
 tcp:
 
   # Whether to enable tcp keep-alive connections.
