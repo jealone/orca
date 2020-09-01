@@ -87,7 +87,7 @@ func (c *SystemConfig) GetAccessLog() string {
 }
 
 func (c *SystemConfig) GetDisableAccessLog() bool {
-	return c.GetDisableAccessLog()
+	return c.DisableAccessLog
 }
 
 type TcpConfig struct {
