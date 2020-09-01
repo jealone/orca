@@ -100,6 +100,12 @@ func TestParseConfig(t *testing.T) {
 				t.Errorf("parse config error: %s", err)
 			}
 
+			err = file.Close()
+
+			if nil != err {
+				t.Errorf("close config file error: %s", err)
+			}
+
 			if !reflect.DeepEqual(got.SystemConfig, tt.want.SystemConfig) {
 				t.Errorf("ParseConfig() = %v, want %v", got, tt.want)
 			}
@@ -122,6 +128,10 @@ func TestParseConfig(t *testing.T) {
 
 			if !reflect.DeepEqual(*got.GetRequest(), *tt.want.GetRequest()) {
 				t.Errorf("RequestConfig() = %v, want %v", got.GetRequest(), tt.want.GetRequest())
+			}
+
+			if !reflect.DeepEqual(*got.GetAccessLog(), *tt.want.GetAccessLog()) {
+				t.Errorf("AccessLogConfig() = %v, want %v", got.GetAccessLog(), tt.want.GetAccessLog())
 			}
 
 		})

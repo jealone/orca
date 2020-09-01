@@ -30,11 +30,12 @@ func ParseConfig(decoder ConfigDecoder) (*ServerConfig, error) {
 type ServerConfig struct {
 	SystemConfig
 
-	Tcp     TcpConfig     `yaml:"tcp"`
-	Conn    ConnConfig    `yaml:"conn"`
-	Buffer  BufferConfig  `yaml:"buffer"`
-	Header  HeaderConfig  `yaml:"header"`
-	Request RequestConfig `yaml:"request"`
+	Tcp       TcpConfig       `yaml:"tcp"`
+	Conn      ConnConfig      `yaml:"conn"`
+	Buffer    BufferConfig    `yaml:"buffer"`
+	Header    HeaderConfig    `yaml:"header"`
+	Request   RequestConfig   `yaml:"request"`
+	AccessLog AccessLogConfig `yaml:"access_log"`
 }
 
 func (c *ServerConfig) GetTcp() *TcpConfig {
@@ -57,13 +58,48 @@ func (c *ServerConfig) GetRequest() *RequestConfig {
 	return &c.Request
 }
 
+func (c *ServerConfig) GetAccessLog() *AccessLogConfig {
+	return &c.AccessLog
+}
+
+type AccessLogConfig struct {
+	Logfile    string `yaml:"logfile"`
+	MaxSize    int    `yaml:"max_size"`
+	MaxBackups int    `yaml:"max_backups"`
+	MaxAge     int    `yaml:"max_age"`
+	Compress   bool   `yaml:"compress"`
+}
+
+func (c *AccessLogConfig) GetLogfile() string {
+	if "" == c.Logfile {
+		return "logs/access.log"
+
+	}
+	return c.Logfile
+}
+
+func (c *AccessLogConfig) GetMaxSize() int {
+	return c.MaxSize
+}
+
+func (c *AccessLogConfig) GetMaxAge() int {
+	return c.MaxAge
+}
+
+func (c *AccessLogConfig) GetMaxBackups() int {
+	return c.MaxBackups
+}
+
+func (c *AccessLogConfig) GetCompress() bool {
+	return c.Compress
+}
+
 type SystemConfig struct {
-	AccessLog                    string `yaml:"access_log"`
-	DisableAccessLog             bool   `yaml:"disable_access_log"`
-	GetOnly                      bool   `yaml:"get_only"`
-	DisablePreParseMultipartForm bool   `yaml:"disable_multipart_parse"`
-	ReduceMemoryUsage            bool   `yaml:"reduce_memory_usage"`
-	LogAllErrors                 bool   `yaml:"all_errors"`
+	DisableAccessLog             bool `yaml:"disable_access_log"`
+	GetOnly                      bool `yaml:"get_only"`
+	DisablePreParseMultipartForm bool `yaml:"disable_multipart_parse"`
+	ReduceMemoryUsage            bool `yaml:"reduce_memory_usage"`
+	LogAllErrors                 bool `yaml:"all_errors"`
 }
 
 func (c *SystemConfig) GetMethodOnly() bool {
@@ -80,10 +116,6 @@ func (c *SystemConfig) GetReduceMemoryUsage() bool {
 
 func (c *SystemConfig) GetLogAllErrors() bool {
 	return c.LogAllErrors
-}
-
-func (c *SystemConfig) GetAccessLog() string {
-	return c.AccessLog
 }
 
 func (c *SystemConfig) GetDisableAccessLog() bool {

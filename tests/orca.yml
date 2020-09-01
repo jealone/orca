@@ -35,10 +35,7 @@ reduce_memory_usage: false
 # are suppressed in order to limit output log traffic.
 all_errors: false
 
-access_log: access.log
-
 tcp:
-  addr: ":8080"
   # Whether to enable tcp keep-alive connections.
   #
   # Whether the operating system should send tcp keep-alive messages on the tcp connection.
@@ -179,3 +176,9 @@ request:
   #
   # Request body size is limited by DefaultMaxRequestBodySize by default.
   max_request_body_size: 0
+
+access_log:
+  logfile: ""
+  max_size: 0
+  max_backups: 0
+  compress: false

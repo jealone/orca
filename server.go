@@ -1,5 +1,7 @@
 package orca
 
+import "fmt"
+
 type RouterAdapter interface {
 	Handler(*RequestCtx)
 }
@@ -51,6 +53,8 @@ func NewHttpServe(c ServerConfig, Logger Logger, r RouterAdapter, options ...fun
 		MaxRequestsPerConn: c.GetRequest().GetMaxRequestsPerConn(),
 		MaxRequestBodySize: c.GetRequest().GetMaxRequestBodySize(),
 	}
+
+	fmt.Printf("http serve at %s\n", c.GetTcp().GetAddr())
 
 	return server.ListenAndServe(c.GetTcp().GetAddr())
 }

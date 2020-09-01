@@ -4,50 +4,21 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"syscall"
 	"time"
 )
 
 var (
-	accessLogger         *AccessLogger
-	defaultAccessLogName = "logs/access.log"
+	accessLogger *AccessLogger
 )
 
 func accessLog(ctx *RequestCtx) {
 	log(accessLogger, ctx)
 }
 
-func NewLogger(path string) {
+func NewLogger(config *AccessLogConfig) {
 
-	if "" == path {
-		path = defaultAccessLogName
-	}
-
-	abs, err := filepath.Abs(path)
-
-	if nil != err {
-		// 创建目录
-		fmt.Printf("log path error:%s\n", err)
-		os.Exit(0)
-	}
-
-	info, err := os.Stat(abs)
-
-	if nil != err {
-		fmt.Printf("log path error:%s\n", err)
-		os.Exit(0)
-	}
-
-	var accessLogFile string
-
-	if info.IsDir() {
-		accessLogFile = filepath.Join(abs, defaultAccessLogName)
-	} else {
-		accessLogFile = abs
-	}
-
-	c, rotater := newFileNotify(accessLogFile, syscall.SIGHUP)
+	c, rotater := newFileNotify(config, syscall.SIGHUP)
 
 	go func() {
 		defer func() {
@@ -67,8 +38,9 @@ func NewLogger(path string) {
 	accessLogger = newLogger(rotater)
 }
 
-func newFileNotify(logfile string, signals ...os.Signal) (chan os.Signal, *Rotater) {
+func newFileNotify(config *AccessLogConfig, signals ...os.Signal) (chan os.Signal, *Rotater) {
 	c := make(chan os.Signal, 1)
+	file := config.GetLogfile()
 	signal.Notify(c, signals...)
 	go func() {
 		defer func() {
@@ -80,7 +52,7 @@ func newFileNotify(logfile string, signals ...os.Signal) (chan os.Signal, *Rotat
 		for {
 			select {
 			case <-ticker:
-				_, err := os.Stat(logfile)
+				_, err := os.Stat(file)
 				if nil != err && !os.IsExist(err) {
 					c <- syscall.SIGHUP
 				}
@@ -89,11 +61,12 @@ func newFileNotify(logfile string, signals ...os.Signal) (chan os.Signal, *Rotat
 	}()
 
 	rotater := &Rotater{
-		Filename:   logfile,
-		MaxSize:    100,
-		MaxBackups: 4,
-		MaxAge:     7,
-		Compress:   false,
+		Filename:   file,
+		MaxSize:    config.GetMaxSize(),
+		MaxBackups: config.GetMaxBackups(),
+		MaxAge:     config.GetMaxAge(),
+		Compress:   config.GetCompress(),
 	}
+
 	return c, rotater
 }
