@@ -91,8 +91,9 @@ func (c *SystemConfig) GetDisableAccessLog() bool {
 }
 
 type TcpConfig struct {
-	TCPKeepalive       bool `yaml:"tcp_keepalive"`
-	TCPKeepalivePeriod int  `yaml:"tcp_keepalive_interval"`
+	TCPKeepalive       bool   `yaml:"tcp_keepalive"`
+	TCPKeepalivePeriod int    `yaml:"tcp_keepalive_interval"`
+	Addr               string `yaml:"addr"`
 }
 
 func (c *TcpConfig) GetTCPKeepalive() bool {
@@ -101,6 +102,13 @@ func (c *TcpConfig) GetTCPKeepalive() bool {
 
 func (c *TcpConfig) GetTCPKeepalivePeriod() time.Duration {
 	return time.Duration(c.TCPKeepalivePeriod) * time.Millisecond
+}
+
+func (c *TcpConfig) GetAddr() string {
+	if "" == c.Addr {
+		return ":8080"
+	}
+	return c.Addr
 }
 
 type HeaderConfig struct {

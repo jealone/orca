@@ -4,7 +4,7 @@ type RouterAdapter interface {
 	Handler(*RequestCtx)
 }
 
-func NewHttpServer(c ServerConfig, Logger Logger, r RouterAdapter, options ...func(filter Filter) Filter) *Server {
+func NewHttpServe(c ServerConfig, Logger Logger, r RouterAdapter, options ...func(filter Filter) Filter) error {
 
 	h := r.Handler
 
@@ -17,7 +17,7 @@ func NewHttpServer(c ServerConfig, Logger Logger, r RouterAdapter, options ...fu
 		h = AfterFilter(h, AccessLogFilter)
 	}
 
-	return &Server{
+	server := &Server{
 		Handler:      h,
 		Logger:       Logger,
 		ErrorHandler: errorHandler,
@@ -51,4 +51,6 @@ func NewHttpServer(c ServerConfig, Logger Logger, r RouterAdapter, options ...fu
 		MaxRequestsPerConn: c.GetRequest().GetMaxRequestsPerConn(),
 		MaxRequestBodySize: c.GetRequest().GetMaxRequestBodySize(),
 	}
+
+	return server.ListenAndServe(c.GetTcp().GetAddr())
 }

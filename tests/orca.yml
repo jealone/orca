@@ -38,7 +38,7 @@ all_errors: false
 access_log: access.log
 
 tcp:
-
+  addr: ":8080"
   # Whether to enable tcp keep-alive connections.
   #
   # Whether the operating system should send tcp keep-alive messages on the tcp connection.
