@@ -1,7 +1,7 @@
 package orca
 
 var (
-	afterFilters = lambdaFilter(after)
+	afterFilters  = lambdaFilter(after)
 	beforeFilters = lambdaFilter(before)
 )
 
@@ -13,10 +13,6 @@ func BeforeFilter(handler Filter, filters ...Filter) Filter {
 
 func AfterFilter(handler Filter, filters ...Filter) Filter {
 	return afterFilters(handler, filters)
-}
-
-func AccessLogFilter(ctx *RequestCtx) {
-	accessLog(ctx)
 }
 
 func after(filter Filter, filters []Filter) Filter {
@@ -35,10 +31,14 @@ func before(filter Filter, filters []Filter) Filter {
 
 func lambdaFilter(l lambda) lambda {
 	return func(handler Filter, filters []Filter) Filter {
-		if filters == nil || len(filters) == 0  {
+		if filters == nil || len(filters) == 0 {
 			return handler
 		} else {
 			return lambdaFilter(l)(l(handler, filters), filters[1:])
 		}
 	}
+}
+
+func AccessLogFilter(ctx *RequestCtx) {
+	accessLog(ctx)
 }

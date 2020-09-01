@@ -12,10 +12,9 @@ import (
 
 type (
 	AccessLogger = zap.Logger
-	Field = zap.Field
-	Rotater = lumberjack.Logger
+	Field        = zap.Field
+	Rotater      = lumberjack.Logger
 )
-
 
 func log(logger *AccessLogger, ctx *RequestCtx) {
 	now := time.Now()

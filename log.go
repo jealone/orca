@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"time"
 )
+
 var (
 	accessLogger *AccessLogger
 )
@@ -15,7 +16,6 @@ var (
 func accessLog(ctx *RequestCtx) {
 	log(accessLogger, ctx)
 }
-
 
 func NewLogger(dir string) {
 	abs, err := filepath.Abs(dir)

@@ -1,7 +1,7 @@
 package orca
 
 func panicHandler(ctx *RequestCtx, rcp interface{}) {
-	badRequestResponse(ctx, StatusInternalServerError)
+	badRequestResponse(ctx, StatusMethodNotAllowed)
 	ctx.Logger().Printf("panic:%s", rcp)
 }
 

@@ -5,18 +5,18 @@ import (
 )
 
 type (
-	RequestCtx = fasthttp.RequestCtx
-	Filter = fasthttp.RequestHandler
-	Server = fasthttp.Server
-	Logger = fasthttp.Logger
+	RequestCtx     = fasthttp.RequestCtx
+	Filter         = fasthttp.RequestHandler
+	Server         = fasthttp.Server
+	RequestHandler = fasthttp.RequestHandler
+	Logger         = fasthttp.Logger
 )
 
 const (
 	StatusInternalServerError = fasthttp.StatusInternalServerError
-	StatusNotFound = fasthttp.StatusNotFound
-	StatusMethodNotAllowed = fasthttp.StatusMethodNotAllowed
+	StatusNotFound            = fasthttp.StatusNotFound
+	StatusMethodNotAllowed    = fasthttp.StatusMethodNotAllowed
 )
-
 
 func badRequestResponse(ctx *RequestCtx, statusCode int) {
 	message := fasthttp.StatusMessage(statusCode)
