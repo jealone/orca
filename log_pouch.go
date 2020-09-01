@@ -53,7 +53,6 @@ func newLogger(writer io.Writer) *AccessLogger {
 	encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 	encoder := zapcore.NewConsoleEncoder(encoderConfig)
 	writerSync := zapcore.AddSync(writer)
-	core := zapcore.NewCore(encoder, writerSync, zapcore.DebugLevel)
-	//return zap.New(core, zap.AddCaller(), zap.AddCallerSkip(2))
+	core := zapcore.NewCore(encoder, writerSync, zapcore.InfoLevel)
 	return zap.New(core)
 }
