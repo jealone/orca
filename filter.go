@@ -38,7 +38,3 @@ func lambdaFilter(l lambda) lambda {
 		}
 	}
 }
-
-func AccessLogFilter(ctx *RequestCtx) {
-	accessLog(ctx)
-}

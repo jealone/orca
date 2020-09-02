@@ -14,11 +14,6 @@ func NewHttpServe(c ServerConfig, Logger Logger, r RouterAdapter, options ...fun
 		h = option(h)
 	}
 
-	if !c.GetDisableAccessLog() {
-		NewLogger(c.GetAccessLog())
-		h = AfterFilter(h, AccessLogFilter)
-	}
-
 	server := &Server{
 		Handler:      h,
 		Logger:       Logger,
