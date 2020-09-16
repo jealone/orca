@@ -77,7 +77,7 @@ func BenchmarkUnfoldFilter(b *testing.B) {
 	b.ReportAllocs()
 	c := &RequestCtx{}
 
-	h := unfold(func(ctx *fasthttp.RequestCtx) {
+	h := AfterFilter(nil, func(ctx *fasthttp.RequestCtx) {
 	})
 
 	for i := 0; i < b.N; i++ {

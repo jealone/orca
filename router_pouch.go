@@ -31,7 +31,7 @@ type Router struct {
 func (r *Router) Group(path string, handlers ...RequestHandler) *Group {
 	return &Group{
 		fasthttpGroup: r.fasthttpRouter.Group(path),
-		handler:       unfold(handlers...),
+		handler:       AfterFilter(nil, handlers...),
 	}
 }
 
