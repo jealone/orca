@@ -6,7 +6,7 @@ type RouterAdapter interface {
 	Handler(*RequestCtx)
 }
 
-func NewHttpServe(c ServerConfig, Logger Logger, r RouterAdapter, options ...func(filter Filter) Filter) error {
+func NewHttpServe(c ServerConfig, Logger Logger, r RouterAdapter, options ...func(filter Handler) Handler) error {
 
 	h := r.Handler
 

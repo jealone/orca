@@ -6,11 +6,13 @@ import (
 
 type (
 	RequestCtx     = fasthttp.RequestCtx
-	Filter         = fasthttp.RequestHandler
+	Handler        = fasthttp.RequestHandler
 	Server         = fasthttp.Server
 	RequestHandler = fasthttp.RequestHandler
 	Logger         = fasthttp.Logger
 )
+
+type MiddlewareHandler func(*RequestCtx) error
 
 const (
 	StatusInternalServerError = fasthttp.StatusInternalServerError

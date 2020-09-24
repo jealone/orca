@@ -7,10 +7,10 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func TestFilter(t *testing.T) {
+func TestHandler(t *testing.T) {
 	type args struct {
 		ctx     *RequestCtx
-		Handler Filter
+		Handler Handler
 	}
 
 	var buf bytes.Buffer
@@ -23,7 +23,7 @@ func TestFilter(t *testing.T) {
 		{
 			name: "before",
 			args: args{
-				Handler: BeforeFilter(func(ctx *RequestCtx) {
+				Handler: BeforeHandler(func(ctx *RequestCtx) {
 					buf.WriteString("handler")
 				}, func(ctx *RequestCtx) {
 					buf.WriteString("pre handler=>")
@@ -34,7 +34,7 @@ func TestFilter(t *testing.T) {
 		{
 			name: "after",
 			args: args{
-				Handler: AfterFilter(func(ctx *RequestCtx) {
+				Handler: AfterHandler(func(ctx *RequestCtx) {
 					buf.WriteString("handler")
 				}, func(ctx *RequestCtx) {
 					buf.WriteString("=>after handler")
@@ -63,7 +63,7 @@ func BenchmarkFilter(b *testing.B) {
 	b.ReportAllocs()
 	c := &RequestCtx{}
 
-	h := AfterFilter(func(ctx *RequestCtx) {
+	h := AfterHandler(func(ctx *RequestCtx) {
 	}, func(ctx *RequestCtx) {
 	})
 
@@ -77,7 +77,7 @@ func BenchmarkUnfoldFilter(b *testing.B) {
 	b.ReportAllocs()
 	c := &RequestCtx{}
 
-	h := AfterFilter(nil, func(ctx *fasthttp.RequestCtx) {
+	h := AfterHandler(nil, func(ctx *fasthttp.RequestCtx) {
 	})
 
 	for i := 0; i < b.N; i++ {
