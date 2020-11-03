@@ -37,10 +37,17 @@ func Monitor(conf *KeepaliveConfig, server *Server) <-chan struct{} {
 
 	go func() {
 		<-c
+		interval := conf.GetInterval()
 		fmt.Println("terminate...")
 		Healthy(conf.GetUnhealthy())
-		fmt.Println(server.Shutdown())
-		fmt.Println("graceful stop...")
+		fmt.Printf("change alive status(%d)\n", healthyCheck())
+		time.Sleep(interval)
+		err := server.Shutdown()
+		if nil != err {
+			fmt.Println("stop fatal")
+		} else {
+			fmt.Println("graceful stop...")
+		}
 		done <- struct{}{}
 	}()
 
@@ -58,7 +65,6 @@ func Monitor(conf *KeepaliveConfig, server *Server) <-chan struct{} {
 }
 
 func KeepaliveServer(conf KeepaliveConfig) error {
-	time.Sleep(conf.GetInterval())
 	return fasthttp.ListenAndServe(conf.GetAddr(), func(ctx *fasthttp.RequestCtx) {
 		switch string(ctx.Path()) {
 		case conf.GetPath():

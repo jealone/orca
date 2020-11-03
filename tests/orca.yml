@@ -186,8 +186,7 @@ access_log:
 keepalive:
   addr: ":9110"
   path: /
-  msg: "orca bravo"
-  interval: 1000
+  interval: 10000
   healthy: 200
   unhelthy: 500
   signal:
