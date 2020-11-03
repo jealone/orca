@@ -20,7 +20,7 @@ type (
 
 	RequestHeader = fasthttp.RequestHeader
 
-	YamlNode yaml.Node
+	YamlNode = yaml.Node
 )
 
 type MiddlewareHandler func(*RequestCtx) error

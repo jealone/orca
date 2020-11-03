@@ -65,8 +65,8 @@ func (c *ServerConfig) GetKeepalive() *KeepaliveConfig {
 	return &c.Keepalive
 }
 
-func (c *ServerConfig) GetAccessLog() YamlNode {
-	return c.AccessLog
+func (c *ServerConfig) GetAccessLog() *YamlNode {
+	return &c.AccessLog
 }
 
 type KeepaliveConfig struct {
