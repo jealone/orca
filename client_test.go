@@ -25,8 +25,7 @@ func initDefaultClient(t fatal) {
 		t.Fatal(err)
 	}
 
-	getClient := CreateClient(ApplyConfig(conf))
-	defaultClient = getClient()
+	defaultClient = NewClient(ApplyConfig(conf))
 }
 
 func TestClient_Get(t *testing.T) {

@@ -21,22 +21,13 @@ func createPool(f func() interface{}) func() *sync.Pool {
 	}
 }
 
-func CreateClient(options ...Option) func() *Client {
-	var (
-		once   sync.Once
-		client *Client
-	)
-	return func() *Client {
-		once.Do(func() {
-			client = &Client{
-				http:     &HttpClient{},
-				executor: exec,
-				request:  request,
-			}
-			client = client.WithOptions(options...)
-		})
-		return client
+func NewClient(options ...Option) *Client {
+	c := &Client{
+		http:     &HttpClient{},
+		executor: exec,
+		request:  request,
 	}
+	return c.WithOptions(options...)
 }
 
 type Client struct {
