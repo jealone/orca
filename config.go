@@ -11,6 +11,14 @@ var (
 	errorEmptyDecoder = errors.New("decoder is nil")
 )
 
+const (
+	defaultAddr        = ":8080"
+	defaultMonitorAddr = ":9110"
+	defaultPath        = "/"
+	defaultAliveStatus = 200
+	defaultDeadStatus  = 503
+)
+
 type ConfigDecoder interface {
 	Decode(v interface{}) (err error)
 }
@@ -80,6 +88,9 @@ type KeepaliveConfig struct {
 }
 
 func (k *KeepaliveConfig) GetPath() string {
+	if "" == k.Path {
+		return defaultPath
+	}
 	return k.Path
 }
 
@@ -88,14 +99,23 @@ func (k *KeepaliveConfig) GetMsg() string {
 }
 
 func (k *KeepaliveConfig) GetAddr() string {
+	if "" == k.Addr {
+		return defaultMonitorAddr
+	}
 	return k.Addr
 }
 
 func (k *KeepaliveConfig) GetHealthy() int {
+	if 0 == k.Healthy {
+		return defaultAliveStatus
+	}
 	return k.Healthy
 }
 
 func (k *KeepaliveConfig) GetUnhealthy() int {
+	if 0 == k.Unhealthy {
+		return defaultDeadStatus
+	}
 	return k.Unhealthy
 }
 
@@ -187,7 +207,7 @@ func (c *TcpConfig) GetTCPKeepalivePeriod() time.Duration {
 
 func (c *TcpConfig) GetAddr() string {
 	if "" == c.Addr {
-		return ":8080"
+		return defaultAddr
 	}
 	return c.Addr
 }
