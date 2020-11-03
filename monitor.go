@@ -41,7 +41,7 @@ func Monitor(conf *KeepaliveConfig, server *Server) <-chan struct{} {
 		Healthy(conf.GetUnhealthy())
 		fmt.Println(server.Shutdown())
 		fmt.Println("graceful stop...")
-		done <- nil
+		done <- struct{}{}
 	}()
 
 	go func() {
