@@ -2,6 +2,8 @@ package orca
 
 import (
 	"errors"
+	"os"
+	"syscall"
 	"time"
 )
 
@@ -35,7 +37,8 @@ type ServerConfig struct {
 	Buffer    BufferConfig    `yaml:"buffer"`
 	Header    HeaderConfig    `yaml:"header"`
 	Request   RequestConfig   `yaml:"request"`
-	AccessLog AccessLogConfig `yaml:"access_log"`
+	Keepalive KeepaliveConfig `yaml:"keepalive"`
+	AccessLog YamlNode        `yaml:"access_log"`
 }
 
 func (c *ServerConfig) GetTcp() *TcpConfig {
@@ -58,41 +61,92 @@ func (c *ServerConfig) GetRequest() *RequestConfig {
 	return &c.Request
 }
 
-func (c *ServerConfig) GetAccessLog() *AccessLogConfig {
-	return &c.AccessLog
+func (c *ServerConfig) GetKeepalive() *KeepaliveConfig {
+	return &c.Keepalive
 }
 
-type AccessLogConfig struct {
-	Logfile    string `yaml:"logfile"`
-	MaxSize    int    `yaml:"max_size"`
-	MaxBackups int    `yaml:"max_backups"`
-	MaxAge     int    `yaml:"max_age"`
-	Compress   bool   `yaml:"compress"`
+func (c *ServerConfig) GetAccessLog() YamlNode {
+	return c.AccessLog
 }
 
-func (c *AccessLogConfig) GetLogfile() string {
-	if "" == c.Logfile {
-		return "logs/access.log"
+type KeepaliveConfig struct {
+	Addr      string `yaml:"addr"`
+	Path      string `yaml:"path"`
+	Msg       string `yaml:"msg"`
+	Healthy   int    `yaml:"healthy"`
+	Unhealthy int    `yaml:"unhealthy"`
+	Interval  int    `yaml:"interval"`
+	Signal    []int  `yaml:"signal"`
+}
 
+func (k *KeepaliveConfig) GetPath() string {
+	return k.Path
+}
+
+func (k *KeepaliveConfig) GetMsg() string {
+	return k.Msg
+}
+
+func (k *KeepaliveConfig) GetAddr() string {
+	return k.Addr
+}
+
+func (k *KeepaliveConfig) GetHealthy() int {
+	return k.Healthy
+}
+
+func (k *KeepaliveConfig) GetUnhealthy() int {
+	return k.Unhealthy
+}
+
+func (k *KeepaliveConfig) GetInterval() time.Duration {
+	return time.Duration(k.Interval) * time.Millisecond
+}
+
+func (k *KeepaliveConfig) GetSignal() []os.Signal {
+	if 0 == len(k.Signal) {
+		return []os.Signal{
+			syscall.SIGTERM,
+		}
 	}
-	return c.Logfile
+	var signals []os.Signal
+	for _, s := range k.Signal {
+		signals = append(signals, syscall.Signal(s))
+	}
+	return signals
 }
 
-func (c *AccessLogConfig) GetMaxSize() int {
-	return c.MaxSize
-}
-
-func (c *AccessLogConfig) GetMaxAge() int {
-	return c.MaxAge
-}
-
-func (c *AccessLogConfig) GetMaxBackups() int {
-	return c.MaxBackups
-}
-
-func (c *AccessLogConfig) GetCompress() bool {
-	return c.Compress
-}
+//type AccessLogConfig struct {
+//	Logfile    string `yaml:"logfile"`
+//	MaxSize    int    `yaml:"max_size"`
+//	MaxBackups int    `yaml:"max_backups"`
+//	MaxAge     int    `yaml:"max_age"`
+//	Compress   bool   `yaml:"compress"`
+//}
+//
+//func (c *AccessLogConfig) GetLogfile() string {
+//	if "" == c.Logfile {
+//		return "logs/access.log"
+//
+//	}
+//	return c.Logfile
+//}
+//
+//func (c *AccessLogConfig) GetMaxSize() int {
+//	return c.MaxSize
+//}
+//
+//func (c *AccessLogConfig) GetMaxAge() int {
+//	return c.MaxAge
+//}
+//
+//func (c *AccessLogConfig) GetMaxBackups() int {
+//	return c.MaxBackups
+//}
+//
+//func (c *AccessLogConfig) GetCompress() bool {
+//	return c.Compress
+//}
 
 type SystemConfig struct {
 	GetOnly                      bool `yaml:"get_only"`

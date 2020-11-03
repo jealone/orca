@@ -2,6 +2,7 @@ package orca
 
 import (
 	"github.com/valyala/fasthttp"
+	"gopkg.in/yaml.v3"
 )
 
 type (
@@ -18,6 +19,8 @@ type (
 	Response = fasthttp.Response
 
 	RequestHeader = fasthttp.RequestHeader
+
+	YamlNode yaml.Node
 )
 
 type MiddlewareHandler func(*RequestCtx) error

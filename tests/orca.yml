@@ -182,3 +182,14 @@ access_log:
   max_size: 0
   max_backups: 0
   compress: false
+
+keepalive:
+  addr: ":9110"
+  path: /
+  msg: "orca bravo"
+  interval: 1000
+  healthy: 200
+  unhelthy: 500
+  signal:
+  - 1
+  - 2
