@@ -1,0 +1,14 @@
+name: sinbad/client
+no_default_ua: false
+max_conns_host: 512
+max_idle_conn_duration: 10000
+max_conn_duration: 0
+max_idemponent_call_attempts: 5
+read_buffer_size: 0
+write_buffer_size: 0
+read_timeout: 0
+write_timeout: 0
+max_response_body_size: 0
+disable_header_names_normalizing: false
+disable_path_normalizing: false
+max_conn_wait_timeout: 0

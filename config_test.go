@@ -1,6 +1,7 @@
 package orca
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -137,4 +138,66 @@ func TestParseConfig(t *testing.T) {
 		})
 	}
 
+}
+
+func TestParseClientConfig(t *testing.T) {
+	type args struct {
+		path string
+	}
+
+	cc := &HttpClientConfig{}
+
+	tests := []struct {
+		name string
+		args args
+		want *HttpClientConfig
+	}{
+		{
+			name: "client",
+			args: args{
+				path: "tests/client.yml",
+			},
+			want: cc,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			got, err := testClientConfig(tt.args.path)
+
+			if nil != err {
+				t.Errorf("%s", err)
+			}
+
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ParseClientConfig() = %v, want %v", got, tt.want)
+			}
+
+		})
+	}
+
+}
+
+func testClientConfig(path string) (*HttpClientConfig, error) {
+
+	path, err := filepath.Abs(path)
+
+	if nil != err {
+		return nil, fmt.Errorf("file path（%s）error: %s", path, err)
+	}
+
+	file, err := os.Open(path)
+	if nil != err {
+		return nil, fmt.Errorf("open file（%s）error: %s", path, err)
+	}
+	defer file.Close()
+	decoder := yaml.NewDecoder(file)
+
+	got, err := ParseClientConfig(decoder)
+
+	if nil != err {
+		return nil, err
+	}
+	return got, nil
 }

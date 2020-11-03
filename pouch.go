@@ -10,6 +10,14 @@ type (
 	Server         = fasthttp.Server
 	RequestHandler = fasthttp.RequestHandler
 	Logger         = fasthttp.Logger
+	HttpClient     = fasthttp.Client
+
+	Args     = fasthttp.Args
+	URI      = fasthttp.URI
+	Request  = fasthttp.Request
+	Response = fasthttp.Response
+
+	RequestHeader = fasthttp.RequestHeader
 )
 
 type MiddlewareHandler func(*RequestCtx) error

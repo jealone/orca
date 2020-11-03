@@ -228,3 +228,161 @@ func (c *RequestConfig) GetMaxRequestsPerConn() int {
 func (c *RequestConfig) GetMaxRequestBodySize() int {
 	return c.MaxRequestBodySize
 }
+
+func ParseClientConfig(decoder ConfigDecoder) (*HttpClientConfig, error) {
+
+	if nil == decoder {
+		return nil, errorEmptyDecoder
+	}
+
+	conf := &HttpClientConfig{}
+	err := decoder.Decode(conf)
+	if nil != err {
+		return nil, err
+	}
+	return conf, nil
+}
+
+type HttpClientConfig struct {
+	Name string
+
+	NoDefaultUserAgentHeader bool `yaml:"no_default_ua"`
+
+	// Maximum number of connections per each host which may be established.
+	//
+	// DefaultMaxConnsPerHost is used if not set.
+	MaxConnsPerHost int `yaml:"max_conn_host"`
+
+	// Idle keep-alive connections are closed after this duration.
+	//
+	// By default idle connections are closed
+	// after DefaultMaxIdleConnDuration.
+	MaxIdleConnDuration int `yaml:"max_idle_conn_duration"`
+
+	// Keep-alive connections are closed after this duration.
+	//
+	// By default connection duration is unlimited.
+	MaxConnDuration int `yaml:"max_conn_duration"`
+
+	// Maximum number of attempts for idempotent calls
+	//
+	// DefaultMaxIdemponentCallAttempts is used if not set.
+	MaxIdemponentCallAttempts int `yaml:"max_idemponent_call_attempts"`
+
+	// Per-connection buffer size for responses' reading.
+	// This also limits the maximum header size.
+	//
+	// Default buffer size is used if 0.
+	ReadBufferSize int `yaml:"read_buffer_size"`
+
+	// Per-connection buffer size for requests' writing.
+	//
+	// Default buffer size is used if 0.
+	WriteBufferSize int `yaml:"write_buffer_size"`
+
+	// Maximum duration for full response reading (including body).
+	//
+	// By default response read timeout is unlimited.
+	ReadTimeout int `yaml:"read_timeout"`
+
+	// Maximum duration for full request writing (including body).
+	//
+	// By default request write timeout is unlimited.
+	WriteTimeout int `yaml:"write_timeout"`
+
+	// Maximum response body size.
+	//
+	// The client returns ErrBodyTooLarge if this limit is greater than 0
+	// and response body is greater than the limit.
+	//
+	// By default response body size is unlimited.
+	MaxResponseBodySize int `yaml:"max_response_body_size"`
+
+	// Header names are passed as-is without normalization
+	// if this option is set.
+	//
+	// Disabled header names' normalization may be useful only for proxying
+	// responses to other clients expecting case-sensitive
+	// header names. See https://github.com/valyala/fasthttp/issues/57
+	// for details.
+	//
+	// By default request and response header names are normalized, i.e.
+	// The first letter and the first letters following dashes
+	// are uppercased, while all the other letters are lowercased.
+	// Examples:
+	//
+	//     * HOST -> Host
+	//     * content-type -> Content-Type
+	//     * cONTENT-lenGTH -> Content-Length
+	DisableHeaderNamesNormalizing bool `yaml:"disable_header_names_normalizing"`
+
+	// Path values are sent as-is without normalization
+	//
+	// Disabled path normalization may be useful for proxying incoming requests
+	// to servers that are expecting paths to be forwarded as-is.
+	//
+	// By default path values are normalized, i.e.
+	// extra slashes are removed, special characters are encoded.
+	DisablePathNormalizing bool `yaml:"disable_path_normalizing"`
+
+	// Maximum duration for waiting for a free connection.
+	//
+	// By default will not waiting, return ErrNoFreeConns immediately
+	MaxConnWaitTimeout int `yaml:"max_conn_wait_timeout"`
+}
+
+func (h *HttpClientConfig) GetName() string {
+	return h.Name
+}
+
+func (h *HttpClientConfig) GetNoDefaultUserAgentHeader() bool {
+	return h.NoDefaultUserAgentHeader
+}
+
+func (h *HttpClientConfig) GetMaxConnsPerHost() int {
+	return h.MaxConnsPerHost
+}
+
+func (h *HttpClientConfig) GetMaxIdleConnDuration() time.Duration {
+	return time.Duration(h.MaxIdleConnDuration) * time.Millisecond
+}
+
+func (h *HttpClientConfig) GetMaxConnDuration() time.Duration {
+	return time.Duration(h.MaxConnDuration) * time.Millisecond
+}
+
+func (h *HttpClientConfig) GetMaxIdemponentCallAttempts() int {
+	return h.MaxIdemponentCallAttempts
+}
+
+func (h *HttpClientConfig) GetReadBufferSize() int {
+	return h.ReadBufferSize
+}
+
+func (h *HttpClientConfig) GetWriteBufferSize() int {
+	return h.WriteBufferSize
+}
+
+func (h *HttpClientConfig) GetReadTimeout() time.Duration {
+	return time.Duration(h.ReadTimeout) * time.Millisecond
+}
+
+func (h *HttpClientConfig) GetWriteTimeout() time.Duration {
+	return time.Duration(h.WriteTimeout) * time.Millisecond
+}
+
+func (h *HttpClientConfig) GetMaxResponseBodySize() int {
+	return h.MaxResponseBodySize
+}
+
+func (h *HttpClientConfig) GetDisableHeaderNamesNormalizing() bool {
+	return h.DisableHeaderNamesNormalizing
+}
+
+func (h *HttpClientConfig) GetDisablePathNormalizing() bool {
+	return h.DisablePathNormalizing
+}
+
+func (h *HttpClientConfig) GetMaxConnWaitTimeout() time.Duration {
+	return time.Duration(h.MaxConnWaitTimeout) * time.Millisecond
+}
