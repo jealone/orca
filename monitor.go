@@ -36,18 +36,22 @@ func Monitor(conf *KeepaliveConfig, server *Server) <-chan struct{} {
 	signal.Notify(c, s...)
 
 	go func() {
-		<-c
 		interval := conf.GetInterval()
+
+		<-c
 		fmt.Println("terminate...")
 		Healthy(conf.GetUnhealthy())
 		fmt.Printf("change alive status(%d)\n", healthyCheck())
+
 		time.Sleep(interval)
+
 		err := server.Shutdown()
 		if nil != err {
 			fmt.Println("stop fatal")
 		} else {
 			fmt.Println("graceful stop...")
 		}
+
 		done <- struct{}{}
 	}()
 
