@@ -1,16 +1,23 @@
 package orca
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/valyala/fasthttp"
 )
 
+var defaultClient = &Client{
+	http:     &HttpClient{},
+	executor: exec,
+	request:  request,
+}
+
 type fatal interface {
 	Fatal(...interface{})
 }
 
-func initDefaultClientConfig(t fatal) *HttpClientConfig {
+func initDefaultClient(t fatal) {
 
 	conf, err := testClientConfig("tests/client.yml")
 
@@ -18,72 +25,47 @@ func initDefaultClientConfig(t fatal) *HttpClientConfig {
 		t.Fatal(err)
 	}
 
-	return conf
-}
-
-func DoTest(do func(*Request, *Response) error) {
-	request := fasthttp.AcquireRequest()
-	response := fasthttp.AcquireResponse()
-	defer fasthttp.ReleaseRequest(request)
-	defer fasthttp.ReleaseResponse(response)
-	_ = do(request, response)
-}
-
-func DoRequestTest(do func() (int, error)) {
-	_, _ = do()
+	defaultClient = NewClient(ApplyConfig(conf))
 }
 
 func TestClient_Get(t *testing.T) {
 
-	//defaultClient.Request(func(client *HttpClient) (status int, err error) {
-	//	status, _, err = client.Get(nil, "http://api.bee.to/sso/")
-	//	return
-	//})
-
-	conf := initDefaultClientConfig(t)
-
-	c := NewClient(ApplyConfig(conf))
-
-	DoRequestTest(func() (int, error) {
-		status, _, err := c.Get(nil, "http://api.bee.to/sso/")
-		return status, err
+	defaultClient.Request(func(client *HttpClient) (status int, err error) {
+		status, _, err = client.Get(nil, "http://api.bee.to/sso/")
+		return
 	})
-
 }
 
 func TestClient_Do(t *testing.T) {
-	conf := initDefaultClientConfig(t)
-
-	c := NewClient(ApplyConfig(conf))
-
-	DoTest(func(request *Request, response *Response) error {
+	defaultClient.Do(func(client *HttpClient, request *Request, response *Response) error {
 		request.SetRequestURI("http://api.bee.to/sso/")
-		err := c.Do(request, response)
+		err := client.Do(request, response)
 		if nil != err {
 			t.Fatal(err)
 		}
 		return err
 	})
-
 }
 
 func BenchmarkClient_Do(b *testing.B) {
-
-	//conf := initDefaultClientConfig(b)
-
-	//c := NewClient(ApplyConfig(conf))
-
-	c := NewClient()
+	initDefaultClient(b)
 
 	b.ResetTimer()
 	b.ReportAllocs()
+	var (
+		err    error
+		status int
+	)
 	for i := 0; i < b.N; i++ {
-		DoTest(func(request *Request, response *Response) error {
-			request.SetRequestURI("http://api.bee.to/sso/")
-			return c.Do(request, response)
-			//status = response.StatusCode()
+		defaultClient.Do(func(client *HttpClient, req *Request, resp *Response) error {
+			req.SetRequestURI("http://api.bee.to/sso/")
+			err = client.Do(req, resp)
+			status = resp.StatusCode()
+			return err
 		})
 	}
+
+	fmt.Println(status)
 
 }
 
@@ -103,16 +85,13 @@ func BenchmarkClientDo(b *testing.B) {
 }
 
 func BenchmarkClient_Request(b *testing.B) {
-	conf := initDefaultClientConfig(b)
-
-	c := NewClient(ApplyConfig(conf))
+	initDefaultClient(b)
 
 	b.ResetTimer()
 	b.ReportAllocs()
-
 	for i := 0; i < b.N; i++ {
-		DoRequestTest(func() (status int, err error) {
-			status, _, err = c.Get(nil, "http://api.bee.to/sso/")
+		defaultClient.Request(func(client *HttpClient) (status int, err error) {
+			status, _, err = client.Get(nil, "http://api.bee.to/sso/")
 			return
 		})
 	}
