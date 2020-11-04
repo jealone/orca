@@ -30,8 +30,8 @@ func initDefaultClient(t fatal) {
 
 func TestClient_Get(t *testing.T) {
 
-	defaultClient.Request(func(client *HttpClient) (status int, err error) {
-		status, _, err = client.Get(nil, "http://api.bee.to/sso/")
+	defaultClient.Request("http://api.bee.to/sso/", func(client *HttpClient, uri string) (status int, err error) {
+		status, _, err = client.Get(nil, uri)
 		return
 	})
 }
@@ -90,8 +90,8 @@ func BenchmarkClient_Request(b *testing.B) {
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		defaultClient.Request(func(client *HttpClient) (status int, err error) {
-			status, _, err = client.Get(nil, "http://api.bee.to/sso/")
+		defaultClient.Request("http://api.bee.to/sso/", func(client *HttpClient, uri string) (status int, err error) {
+			status, _, err = client.Get(nil, uri)
 			return
 		})
 	}

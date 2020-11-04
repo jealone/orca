@@ -33,7 +33,7 @@ func NewClient(options ...Option) *Client {
 type Client struct {
 	http     *HttpClient
 	executor func(HttpClientHandler, *HttpClient, *Request, *Response)
-	request  func(HttpClientRequestHandler, *HttpClient)
+	request  func(HttpClientRequestHandler, *HttpClient, string)
 }
 
 func (c *Client) clone() *Client {
@@ -57,13 +57,13 @@ func (c *Client) Do(handler HttpClientHandler) {
 	c.executor(handler, c.http, request, response)
 }
 
-func (c *Client) Request(handler HttpClientRequestHandler) {
-	c.request(handler, c.http)
+func (c *Client) Request(uri string, handler HttpClientRequestHandler) {
+	c.request(handler, c.http, uri)
 }
 
 type HttpClientHandler func(client *HttpClient, request *Request, response *Response) error
 
-type HttpClientRequestHandler func(client *HttpClient) (status int, err error)
+type HttpClientRequestHandler func(client *HttpClient, uri string) (status int, err error)
 
 type Option interface {
 	apply(*Client)
@@ -106,7 +106,7 @@ func AddExecutor(e func(HttpClientHandler, *HttpClient, *Request, *Response)) Op
 	})
 }
 
-func AddRequest(r func(HttpClientRequestHandler, *HttpClient)) Option {
+func AddRequest(r func(HttpClientRequestHandler, *HttpClient, string)) Option {
 	return optionFunc(func(client *Client) {
 		if nil != r {
 			client.request = r
@@ -118,6 +118,6 @@ func exec(handler HttpClientHandler, client *HttpClient, request *Request, respo
 	_ = handler(client, request, response)
 }
 
-func request(handler HttpClientRequestHandler, client *HttpClient) {
-	_, _ = handler(client)
+func request(handler HttpClientRequestHandler, client *HttpClient, uri string) {
+	_, _ = handler(client, uri)
 }
